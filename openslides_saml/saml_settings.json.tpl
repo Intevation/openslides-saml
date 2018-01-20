@@ -57,5 +57,10 @@
             "displayname": "OpenSlides",
             "url": "http://openslides.org"
         }
+    },
+    "attributeMapping": {
+        "UserID":       ["username",    true],
+        "FirstName":    ["first_name",  false],
+        "LastName":     ["last_name",   false]
     }
 }

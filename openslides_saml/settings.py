@@ -1,10 +1,10 @@
-import os
 import json
-from openslides.utils.main import get_default_settings_dir
+import os
+
+from onelogin.saml2.settings import OneLogin_Saml2_Settings
 
 from .exceptions import SamlException
 
-from onelogin.saml2.settings import OneLogin_Saml2_Settings
 
 README = """\
 Take care of this folder that could contain private key. Be sure that this folder never is published.
@@ -19,6 +19,7 @@ Also you can use other cert to sign the metadata of the SP using the:
 
  * metadata.key
  * metadata.crt"""
+
 
 def create_saml_settings(settings_path: str, template: str=None, **context: str) -> None:
     """
@@ -76,9 +77,43 @@ class SamlSettings():
             raise SamlException(
                 "The settings file located at {} could not be loaded.".format(settings_path))
 
+        # Extract the attribute mapping from the json file and validate it
+        if 'attributeMapping' not in content:
+            raise SamlException("The saml_settings.json does not contain 'attributeMapping'!")
+        mapping = content.pop('attributeMapping')
+
+        self.check_mapping(mapping)
+        self.state['mapping'] = mapping
+
         settings = OneLogin_Saml2_Settings(content, custom_base_path=settings_dir)
         self.state['settings'] = settings
+
+    def check_mapping(self, mapping):
+        one_lookup_true = False
+
+        if not isinstance(mapping, dict):
+            raise SamlException("The attributeMapping is not a dict.")
+        for key, value in mapping.items():
+            if not isinstance(key, str):
+                raise SamlException('The key "{}" has to be a string.'.format(key))
+            if not isinstance(value, list):
+                raise SamlException('The value from key "{}" has to be a list.'.format(key))
+            if not len(value) == 2:
+                raise SamlException('The value from key "{}" has ot two entries.'.format(key))
+            if not isinstance(value[0], str):
+                raise SamlException('The first value from key "{}" has to be a string.'.format(key))
+            if not isinstance(value[1], bool):
+                raise SamlException('The second value from key "{}" has to be a boolean.'.format(key))
+            if value[1]:
+                one_lookup_true = True
+
+        if not one_lookup_true:
+            raise SamlException('At least one attribute has to be used as a lookup value.')
 
     @classmethod
     def get(cls):
         return cls().state['settings']
+
+    @classmethod
+    def get_attribute_mapping(cls):
+        return cls().state['mapping']

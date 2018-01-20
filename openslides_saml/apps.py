@@ -1,4 +1,5 @@
 import os
+
 from django.apps import AppConfig
 
 from . import (
@@ -6,9 +7,10 @@ from . import (
     __license__,
     __url__,
     __verbose_name__,
-    __version__
+    __version__,
 )
 from .exceptions import SamlException
+
 
 class SamlAppConfig(AppConfig):
     name = 'openslides_saml'
@@ -27,7 +29,7 @@ class SamlAppConfig(AppConfig):
         super().__init__(*args, **kwargs)
 
         try:
-            import onelogin.saml2
+            import onelogin.saml2  # noqa
         except ImportError:
             raise SamlException("Could not import onelogin.saml2. Is python-saml3 installed?")
 
@@ -52,7 +54,7 @@ class SamlAppConfig(AppConfig):
             is_local_installation,
         )
         from .urls import urlpatterns
-        from .settings import SamlSettings, create_saml_settings
+        from .settings import SamlSettings
 
         settings_dir = None
         if args:

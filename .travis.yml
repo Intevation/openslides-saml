@@ -1,0 +1,26 @@
+language: python
+sudo: false
+cache:
+  pip: true
+  yarn: true
+python:
+  - "3.4"
+  - "3.5"
+  - "3.6"
+env:
+  - TRAVIS_NODE_VERSION="4"
+before_install:
+  - nvm install $TRAVIS_NODE_VERSION
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH="$HOME/.yarn/bin:$PATH"
+  - sudo apt-get update
+  - sudo apt-get install -y libxml2-dev libxmlsec1-dev libxmlsec1-openssl pkg-config
+install:
+  - pip install --upgrade setuptools pip
+  - pip install -r requirements.txt
+  - pip freeze
+  - yarn
+script:
+  - node_modules/.bin/gulp jshint
+  - if [ "`python --version`" \> "Python 3.5.0" ]; then isort --check-only --recursive openslides_saml tests; fi
+  - flake8 openslides_saml

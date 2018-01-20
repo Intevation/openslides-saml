@@ -1,11 +1,14 @@
 import os
-from django.core.management.base import BaseCommand, CommandError
+
+from django.core.management.base import BaseCommand
 from openslides.utils.main import (
     get_default_settings_dir,
     get_local_settings_dir,
     is_local_installation,
 )
+
 from ...settings import create_saml_settings
+
 
 class Command(BaseCommand):
     """

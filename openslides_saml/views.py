@@ -1,14 +1,17 @@
-from django.views.generic import View
-from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import get_user_model
-
-
+from django.http import (
+    HttpResponse,
+    HttpResponseRedirect,
+    HttpResponseServerError,
+)
+from django.views.generic import View
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 
 from .settings import SamlSettings
+
 
 class IndexView(View):
     """
@@ -35,7 +38,13 @@ class IndexView(View):
         elif 'slo' in request.GET:
             name_id = request.session.get('samlNameId')
             session_index = request.session.get('samlSessionIndex')
-            return HttpResponseRedirect(auth.logout(name_id=name_id, session_index=session_index))
+            auth_logout(request)
+            if name_id is None and session_index is None:
+                return HttpResponseRedirect('/')
+            else:
+                request.session['samlNameId'] = None
+                request.session['samlSessionIndex'] = None
+                return HttpResponseRedirect(auth.logout(name_id=name_id, session_index=session_index))
 
         elif 'acs' in request.GET:
             auth.process_response()
@@ -46,16 +55,15 @@ class IndexView(View):
             else:
                 request.session['samlNameId'] = auth.get_nameid()
                 request.session['samlSessionIndex'] = auth.get_session_index()
-                self.login_user(request, auth.get-attributes())
+                self.login_user(request, auth.get_attributes())
 
-                if 'RelayState' in request.POST and OneLogin_Saml2_Utils.get_self_url(req) != request.POST['RelayState']:
+                if 'RelayState' in request.POST and OneLogin_Saml2_Utils.get_self_url(saml_request) != request.POST['RelayState']:
                     return HttpResponseRedirect(auth.redirect_to(request.POST['RelayState']))
                 else:
                     return HttpResponseRedirect('/')
 
         elif 'sls' in request.GET:
-            dscb = lambda: request.session.flush()
-            url = auth.process_slo(delete_session_cb=dscb)
+            url = auth.process_slo(delete_session_cb=lambda: request.session.flush())
             errors = auth.get_errors()
 
             if errors:
@@ -69,12 +77,8 @@ class IndexView(View):
     def login_user(self, request, attributes):
         User = get_user_model()
 
-        mapping = {
-            'EmailAddress': ('email',       False),
-            'UserID':       ('username',    True),
-            'FirstName':    ('first_name',  False),
-            'LastName':     ('last_name',   False),
-        }
+        mapping = SamlSettings.get_attribute_mapping()
+        print(mapping)
 
         queryargs = self.get_queryargs(mapping, attributes)
         user, created = User.objects.get_or_create(**queryargs)
@@ -109,15 +113,16 @@ class IndexView(View):
             user.save()
 
     def get_saml_auth(self, request):
-       saml_request = {
-           'https': 'on' if request.is_secure() else 'off',
-           'http_host': request.META['HTTP_HOST'],
-           'script_name': request.META['PATH_INFO'],
-           'server_port': request.META['SERVER_PORT'],
-           'get_data': request.GET.copy(),
-           'post_data': request.POST.copy()
-       }
-       return saml_request, OneLogin_Saml2_Auth(saml_request, SamlSettings.get())
+        saml_request = {
+            'https': 'on' if request.is_secure() else 'off',
+            'http_host': request.META['HTTP_HOST'],
+            'script_name': request.META['PATH_INFO'],
+            'server_port': request.META['SERVER_PORT'],
+            'get_data': request.GET.copy(),
+            'post_data': request.POST.copy()
+        }
+        return saml_request, OneLogin_Saml2_Auth(saml_request, SamlSettings.get())
+
 
 def serve_metadata(request, *args, **kwargs):
     settings = SamlSettings.get()

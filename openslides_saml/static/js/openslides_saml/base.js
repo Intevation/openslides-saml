@@ -16,6 +16,6 @@ angular.module('OpenSlidesApp.openslides_saml', [
             languages: ['de']
         });
     }
-])
+]);
 
 })();

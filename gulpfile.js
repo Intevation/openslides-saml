@@ -4,6 +4,7 @@ require('es6-promise').polyfill();
 var gulp = require('gulp'),
     gettext = require('gulp-angular-gettext'),
     jshint = require('gulp-jshint'),
+    path = require('path');
 
 /**
  * Default tasks to be run before start.
