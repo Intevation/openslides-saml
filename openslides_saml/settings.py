@@ -85,6 +85,13 @@ class SamlSettings():
         self.check_mapping(mapping)
         self.state['mapping'] = mapping
 
+        # Extract the custom request settings
+        requestSettings = {}
+        if 'requestSettings' in content:
+            requestSettings = content.pop('requestSettings')
+            self.check_requestSettings(requestSettings)
+        self.state['requestSettings'] = requestSettings
+
         settings = OneLogin_Saml2_Settings(content, custom_base_path=settings_dir)
         self.state['settings'] = settings
 
@@ -110,6 +117,12 @@ class SamlSettings():
         if not one_lookup_true:
             raise SamlException('At least one attribute has to be used as a lookup value.')
 
+    def check_requestSettings(self, settings):
+        if not isinstance(settings, dict):
+            raise SamlException('The requestSettings have to be a dict')
+        if 'https' in settings and settings['https'] not in ('on', 'off'):
+            raise SamlException('The https value must be "on" or "off"')
+
     @classmethod
     def get(cls):
         return cls().state['settings']
@@ -117,3 +130,7 @@ class SamlSettings():
     @classmethod
     def get_attribute_mapping(cls):
         return cls().state['mapping']
+
+    @classmethod
+    def get_request_settings(cls):
+        return cls().state['requestSettings']

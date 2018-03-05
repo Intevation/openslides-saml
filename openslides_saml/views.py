@@ -78,7 +78,6 @@ class IndexView(View):
         User = get_user_model()
 
         mapping = SamlSettings.get_attribute_mapping()
-        print(mapping)
 
         queryargs = self.get_queryargs(mapping, attributes)
         user, created = User.objects.get_or_create(**queryargs)
@@ -92,7 +91,7 @@ class IndexView(View):
         for key, (value, lookup) in mapping.items():
             attribute = attributes.get(key)
             if isinstance(attribute, list):
-                attribute = attribute[0]
+                attribute = ', '.join(attribute)
 
             if lookup:
                 queryargs[value] = attribute
@@ -113,14 +112,15 @@ class IndexView(View):
             user.save()
 
     def get_saml_auth(self, request):
-        saml_request = {
-            'https': 'on' if request.is_secure() else 'off',
-            'http_host': request.META['HTTP_HOST'],
-            'script_name': request.META['PATH_INFO'],
-            'server_port': request.META['SERVER_PORT'],
-            'get_data': request.GET.copy(),
-            'post_data': request.POST.copy()
-        }
+        saml_request = dict(SamlSettings.get_request_settings())
+        # Update not existing keys
+        saml_request['https'] = saml_request.get('https', 'on' if request.is_secure() else 'off')
+        saml_request['http_host'] = saml_request.get('http_host', request.META['HTTP_HOST'])
+        saml_request['script_name'] = saml_request.get('script_name', request.META['PATH_INFO'])
+        saml_request['server_port'] = saml_request.get('server_port', request.META['SERVER_PORT'])
+        # add get and post data
+        saml_request['get_data'] = request.GET.copy()
+        saml_request['post_data'] = request.POST.copy()
         return saml_request, OneLogin_Saml2_Auth(saml_request, SamlSettings.get())
 
 
@@ -133,3 +133,13 @@ def serve_metadata(request, *args, **kwargs):
         return HttpResponseServerError(content=', '.join(errors))
     else:
         return HttpResponse(content=metadata, content_type='text/xml')
+
+
+def is_saml_user(request, *args, **kwargs):
+    content = 'false'
+    if request.user.is_authenticated():
+        name_id = request.session.get('samlNameId')
+        session_index = request.session.get('samlSessionIndex')
+        if name_id is not None and session_index is not None:
+            content = 'true'
+    return HttpResponse(content=content, content_type='application/json')
