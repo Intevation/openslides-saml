@@ -56,6 +56,9 @@ The path has to match with the settings path OpenSlides is started with.
 
 For the first part in the settings file refer to `python3-saml settings documentation<https://github.com/onelogin/python3-saml#settings>`_. All settings described there are merged into the ``saml_settings.json``. Also note the ``README`` file in the ``certs`` folder next to the ``saml_settings.json``.
 
+Attributes
+----------
+
 The identity provider sends attributes to the plugin, if a user sucessfully logged in. To map these attributes to attributes of openslides users, the section ``attributeMapping`` exists. The structure is like this::
 
     "attributeMapping: {
@@ -78,6 +81,18 @@ All available OpenSlides user attributes are:
 To get detailed information see the `models.py<https://github.com/OpenSlides/OpenSlides/blob/master/openslides/users/models.py>`_.
 
 The ``<used for lookup>`` has either to be ``true`` or ``false``. All attributes with this value being true are used to search an existing user. If the user is found, the user gets updated with all changed values and used to log in. If the user is not found, it will be created with all values given. Try to choose unique attributes (e.g. the username), attributes you are sure about to be unique (e.g. maybe the number) or use a combination of attributes.
+
+Requests
+--------
+
+The metadata and requests are prepared for saml, e.g. the port number is needed. If not specified all these values are taken from the requests meta information:
+
+- ``https``: Either ``on`` or ``off``.
+- ``http_host``: The hostname.
+- ``script_name``: The aquivalent to ``PATH_INFO`` in the meta values.
+- ``server_port``: The port the server listen to.
+
+These values may be false, because OpenSlides runs on port 8000 behind a webserver redirecting the traffic from port 80 to port 8000. In the section ``requestSettings`` you can set these values to overwrite the values get in the meta information.
 
 Development
 ===========
