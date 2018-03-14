@@ -12,10 +12,10 @@ service.
 Requirements
 ============
 
-`OpenSlides 2.1<http://openslides.org/>`_
+`OpenSlides 2.1 <http://openslides.org/>`_
 `python3-saml (>= 1.3.0) <https://pypi.python.org/pypi/python3-saml/1.3.0>`_
 
-Note: python3-saml needs thy python package `xmlsec<https://pypi.python.org/pypi/xmlsec/1.3.3>`_ which depends on `libxml2<http://xmlsoft.org/>`_. Those packages need to be installed on a Debian-like system::
+Note: python3-saml needs thy python package `xmlsec <https://pypi.python.org/pypi/xmlsec/1.3.3>`_ which depends on `libxml2 <http://xmlsoft.org/>`_. Those packages need to be installed on a Debian-like system::
 
     $ apt-get install libxml2-dev libxmlsec1-dev libxmlsec1-openssl pkg-config
 
@@ -54,7 +54,11 @@ On startup of OpenSlides, the ``saml_settings.json`` is created in the settings 
 
 The path has to match with the settings path OpenSlides is started with.
 
-For the first part in the settings file refer to `python3-saml settings documentation<https://github.com/onelogin/python3-saml#settings>`_. All settings described there are merged into the ``saml_settings.json``. Also note the ``README`` file in the ``certs`` folder next to the ``saml_settings.json``.
+For the first part in the settings file refer to `python3-saml settings documentation <https://github.com/onelogin/python3-saml#settings>`_. All settings described there are merged into the ``saml_settings.json``. Also note the ``README`` file in the ``certs`` folder next to the ``saml_settings.json``.
+
+General Settings
+----------------
+Here you can provide a custom Text for the SAML login button. The `changePasswordUrl` redirects the User to the given URL when he clicks on `Change password` in the user menu.
 
 Attributes
 ----------
@@ -78,7 +82,7 @@ All available OpenSlides user attributes are:
 - ``about_me``: A free text field.
 - ``is_active``, ``is_present``, ``is_committee``: Boolean flags.
 
-To get detailed information see the `models.py<https://github.com/OpenSlides/OpenSlides/blob/master/openslides/users/models.py>`_.
+To get detailed information see the `models.py <https://github.com/OpenSlides/OpenSlides/blob/master/openslides/users/models.py>`_.
 
 The ``<used for lookup>`` has either to be ``true`` or ``false``. All attributes with this value being true are used to search an existing user. If the user is found, the user gets updated with all changed values and used to log in. If the user is not found, it will be created with all values given. Try to choose unique attributes (e.g. the username), attributes you are sure about to be unique (e.g. maybe the number) or use a combination of attributes.
 
@@ -97,7 +101,7 @@ These values may be false, because OpenSlides runs on port 8000 behind a webserv
 Development
 ===========
 
-To contribute to this plugin, please create your own fork and work there in a branch different to ``master``. Clone your fork, create a virtual environment and make a link into a development checkout from OpenSlides (refer to `this guide<https://github.com/OpenSlides/OpenSlides/blob/master/DEVELOPMENT.rst>`_)::
+To contribute to this plugin, please create your own fork and work there in a branch different to ``master``. Clone your fork, create a virtual environment and make a link into a development checkout from OpenSlides (refer to `this guide <https://github.com/OpenSlides/OpenSlides/blob/master/DEVELOPMENT.rst>`_)::
 
     $ ln -s /<path to this plugin>/openslides_saml /<path to os>/
 

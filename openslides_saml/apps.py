@@ -73,3 +73,10 @@ class SamlAppConfig(AppConfig):
 
         # Make the urls available for openslides
         self.urlpatterns = urlpatterns
+
+    def get_angular_constants(self):
+        from .settings import SamlSettings
+        saml_settings = {
+            'name': 'SAMLSettings',
+            'value': SamlSettings.get_general_settings()}
+        return [saml_settings]

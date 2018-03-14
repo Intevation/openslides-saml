@@ -58,6 +58,10 @@
             "url": "http://openslides.org"
         }
     },
+    "generalSettings": {
+        "loginButtonText": "Login via SAML",
+        "changePasswordUrl": "https://idp.domain.xyz"
+    },
     "attributeMapping": {
         "UserID":       ["username",    true],
         "FirstName":    ["first_name",  false],
