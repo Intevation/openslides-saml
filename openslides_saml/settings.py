@@ -77,6 +77,14 @@ class SamlSettings():
             raise SamlException(
                 "The settings file located at {} could not be loaded.".format(settings_path))
 
+        # Extract general settings
+        if 'generalSettings' not in content:
+            raise SamlException("The saml_settings.json does not contain 'generalSettings'!")
+        generalSettings = content.pop('generalSettings')
+
+        self.check_generalSettings(generalSettings)
+        self.state['generalSettings'] = generalSettings
+
         # Extract the attribute mapping from the json file and validate it
         if 'attributeMapping' not in content:
             raise SamlException("The saml_settings.json does not contain 'attributeMapping'!")
@@ -95,11 +103,23 @@ class SamlSettings():
         settings = OneLogin_Saml2_Settings(content, custom_base_path=settings_dir)
         self.state['settings'] = settings
 
+    def check_generalSettings(self, settings):
+        if not isinstance(settings, dict):
+            raise SamlException('The generalSettings have to be a dict.')
+        if 'loginButtonText' not in settings:
+            raise SamlException('The loginButtonText is not given.')
+        if not isinstance(settings['loginButtonText'], str):
+            raise SamlException('The loginButtonText has to be a string.')
+        if 'changePasswordUrl' not in settings:
+            raise SamlException('The changePasswordUrl is not given.')
+        if not isinstance(settings['changePasswordUrl'], str):
+            raise SamlException('The changePasswordUrl has to be a string.')
+
     def check_mapping(self, mapping):
         one_lookup_true = False
 
         if not isinstance(mapping, dict):
-            raise SamlException("The attributeMapping is not a dict.")
+            raise SamlException('The attributeMapping is not a dict.')
         for key, value in mapping.items():
             if not isinstance(key, str):
                 raise SamlException('The key "{}" has to be a string.'.format(key))
@@ -126,6 +146,10 @@ class SamlSettings():
     @classmethod
     def get(cls):
         return cls().state['settings']
+
+    @classmethod
+    def get_general_settings(cls):
+        return cls().state['generalSettings']
 
     @classmethod
     def get_attribute_mapping(cls):

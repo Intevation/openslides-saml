@@ -10,13 +10,14 @@ angular.module('OpenSlidesApp.openslides_saml.site', [
 .run([
     'templateHooks',
     '$window',
-    function (templateHooks, $window) {
+    'SAMLSettings',
+    function (templateHooks, $window, SAMLSettings) {
         templateHooks.registerHook({
             Id: 'loginFormButtons',
             // I do not know, why the href attribute does not work here. But with JS setting the
             // window.location works...
             template:   '<a href="/saml/?sso" class="btn btn-primary pull-right" translate ng-click="samlLogin()">' +
-                            'Login via SAML' +
+                            SAMLSettings.loginButtonText +
                         '</a>',
             noDivWrap: true,
             scope: {
@@ -116,8 +117,9 @@ angular.module('OpenSlidesApp.openslides_saml.site', [
     'UserPasswordForm',
     'SamlAboutMeForm',
     'isSamlUser',
+    'SAMLSettings',
     function ($delegate, $window, ngDialog, UserProfileForm, UserPasswordForm,
-        SamlAboutMeForm, isSamlUser) {
+        SamlAboutMeForm, isSamlUser, SAMLSettings) {
         $delegate = {
             logout: function () {
                 $window.location = "/saml/?slo";
@@ -131,7 +133,7 @@ angular.module('OpenSlidesApp.openslides_saml.site', [
             },
             changePassword: function () {
                 if (isSamlUser()) {
-                    $window.location = "https://netz.gruene.de";
+                    $window.location = SAMLSettings.changePasswordUrl;
                 } else {
                     ngDialog.open(UserPasswordForm.getDialog());
                 }
