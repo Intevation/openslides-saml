@@ -31,7 +31,7 @@ class SamlAppConfig(AppConfig):
         try:
             import onelogin.saml2  # noqa
         except ImportError:
-            raise SamlException("Could not import onelogin.saml2. Is python-saml3 installed?")
+            raise SamlException('Could not import onelogin.saml2. Is python-saml3 installed?')
 
         try:
             import settings
@@ -47,24 +47,16 @@ class SamlAppConfig(AppConfig):
 
     def ready(self):
         # Import all required stuff.
-        from openslides import args
-        from openslides.utils.main import (
-            get_default_settings_dir,
-            get_local_settings_dir,
-            is_local_installation,
-        )
+        from django.conf import settings
         from .urls import urlpatterns
         from .settings import SamlSettings
 
-        settings_dir = None
-        if args:
-            settings_dir = args.settings_dir
-
-        if settings_dir is None:
-            if is_local_installation():
-                settings_dir = get_local_settings_dir()
-            else:
-                settings_dir = get_default_settings_dir()
+        try:
+            settings_dir = os.path.dirname(os.path.abspath(settings.SETTINGS_FILEPATH))
+        except AttributeError:
+            raise SamlException(
+                "'SETTINGS_FILEPATH' is not in your settings.py. " +
+                "Please add the following line: 'SETTINGS_FILEPATH = __file__'.")
 
         # Instanciate the SamlSettings. Here, the class is loaded the first time
         # and by providing the settings_path the internal state is set to this
