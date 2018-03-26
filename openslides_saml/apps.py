@@ -1,4 +1,5 @@
 import os
+import sys
 
 from django.apps import AppConfig
 
@@ -58,10 +59,11 @@ class SamlAppConfig(AppConfig):
                 "'SETTINGS_FILEPATH' is not in your settings.py. " +
                 "Please add the following line: 'SETTINGS_FILEPATH = __file__'.")
 
-        # Instanciate the SamlSettings. Here, the class is loaded the first time
-        # and by providing the settings_path the internal state is set to this
-        # path.
-        SamlSettings(settings_dir)
+        # Instanciate the SamlSettings, if the worker is run normally. Here,
+        # the class is loaded the first time and by providing the settings_path
+        # the internal state is set to this path.
+        if sys.argv[1] != 'create-saml-settings':
+            SamlSettings(settings_dir)
 
         # Make the urls available for openslides
         self.urlpatterns = urlpatterns

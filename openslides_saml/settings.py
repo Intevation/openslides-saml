@@ -46,8 +46,6 @@ def create_saml_settings(settings_path: str, template: str=None, **context: str)
         print("Written README into the certs folder: {}".format(cert_dir))
     print("Created SAML settings at: {}".format(settings_path))
 
-    return settings_path
-
 
 class SamlSettings():
     state = {}
