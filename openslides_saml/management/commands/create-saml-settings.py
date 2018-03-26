@@ -1,11 +1,6 @@
 import os
 
 from django.core.management.base import BaseCommand
-from openslides.utils.main import (
-    get_default_settings_dir,
-    get_local_settings_dir,
-    is_local_installation,
-)
 
 from ...settings import create_saml_settings
 
@@ -27,11 +22,13 @@ class Command(BaseCommand):
         settings_dir = options.get('path')
 
         if settings_dir is None:
-            if is_local_installation():
-                settings_dir = get_local_settings_dir()
-            else:
-                settings_dir = get_default_settings_dir()
+            from django.conf import settings
+            try:
+                settings_dir = os.path.dirname(os.path.abspath(settings.SETTINGS_FILEPATH))
+            except AttributeError:
+                raise SamlException(
+                    "'SETTINGS_FILEPATH' is not in your settings.py. " +
+                    "Please add the following line: 'SETTINGS_FILEPATH = __file__'.")
 
         settings_path = os.path.join(settings_dir, 'saml_settings.json')
         create_saml_settings(settings_path)
-        print("Created SAML settings at: {}".format(settings_path))
