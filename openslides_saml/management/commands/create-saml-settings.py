@@ -2,6 +2,7 @@ import os
 
 from django.core.management.base import BaseCommand
 
+from ...exceptions import SamlException
 from ...settings import create_saml_settings
 
 
