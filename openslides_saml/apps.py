@@ -57,7 +57,7 @@ class SamlAppConfig(AppConfig):
         except AttributeError:
             raise SamlException(
                 "'SETTINGS_FILEPATH' is not in your settings.py. " +
-                "Please add the following line: 'SETTINGS_FILEPATH = __file__'.")
+                "Would you kindly add the following line: 'SETTINGS_FILEPATH = __file__'?")
 
         # Instanciate the SamlSettings, if the worker is run normally. Here,
         # the class is loaded the first time and by providing the settings_path

@@ -48,6 +48,12 @@ Start OpenSlides::
 Configuration
 =============
 
+Before the first start this line needs to be added to the ``settings.py``::
+
+    SETTINGS_FILEPATH = __file__
+
+If this line isn't there, the plugin will remind you :)
+
 On startup of OpenSlides, the ``saml_settings.json`` is created in the settings folder if it does not exist. To force creating this file run::
 
     $ python manage.py create-saml-settings [--dir /<path to custom settings dir>/]
