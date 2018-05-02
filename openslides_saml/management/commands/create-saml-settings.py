@@ -29,7 +29,7 @@ class Command(BaseCommand):
             except AttributeError:
                 raise SamlException(
                     "'SETTINGS_FILEPATH' is not in your settings.py. " +
-                    "Please add the following line: 'SETTINGS_FILEPATH = __file__'.")
+                    "Would you kindly add the following line: 'SETTINGS_FILEPATH = __file__'?")
 
         settings_path = os.path.join(settings_dir, 'saml_settings.json')
         create_saml_settings(settings_path)
