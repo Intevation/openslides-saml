@@ -39,12 +39,6 @@ class SamlAppConfig(AppConfig):
         except ImportError:
             # When testing, we cannot import settings here..
             pass
-        else:
-            # Add the staticfiles dir to OpenSlides
-            base_path = os.path.realpath(os.path.dirname(os.path.abspath(__file__)))
-            # remove the app folder 'openslides_saml'
-            base_path = os.path.dirname(base_path)
-            settings.STATICFILES_DIRS.append(os.path.join(base_path, 'static'))
 
     def ready(self):
         # Import all required stuff.
