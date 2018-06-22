@@ -151,7 +151,7 @@ MIT License, see LICENSE file. The authors are mentioned in the AUTHORS file.
 Changelog
 =========
 
-Version 1.0 (unreleased)
+Version 1.0 (2018-06-22)
 ------------------------
 * Initial release. Please read the README for every setting and
   possibility for customization.
