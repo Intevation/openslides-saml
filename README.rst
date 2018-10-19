@@ -151,6 +151,10 @@ MIT License, see LICENSE file. The authors are mentioned in the AUTHORS file.
 Changelog
 =========
 
+Version 1.0.2 (unreleased)
+--------------------------
+
+
 Version 1.0.1 (2018-10-19)
 --------------------------
 * Support for OpenSlides 2.3
