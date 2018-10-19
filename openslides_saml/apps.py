@@ -34,12 +34,6 @@ class SamlAppConfig(AppConfig):
         except ImportError:
             raise SamlException('Could not import onelogin.saml2. Is python-saml3 installed?')
 
-        try:
-            import settings
-        except ImportError:
-            # When testing, we cannot import settings here..
-            pass
-
     def ready(self):
         # Import all required stuff.
         from django.conf import settings

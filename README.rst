@@ -12,7 +12,7 @@ service.
 Requirements
 ============
 
-* `OpenSlides 2.2 <http://openslides.org/>`_
+* `OpenSlides 2.2|2.3 <http://openslides.org/>`_
 * `python3-saml (>= 1.3.0) <https://pypi.python.org/pypi/python3-saml/1.3.0>`_
 
 Note: python3-saml needs thy python package `xmlsec <https://pypi.python.org/pypi/xmlsec/1.3.3>`_ which depends on `libxml2 <http://xmlsoft.org/>`_. Those packages need to be installed on a Debian-like system::
@@ -151,8 +151,9 @@ MIT License, see LICENSE file. The authors are mentioned in the AUTHORS file.
 Changelog
 =========
 
-Version 1.1 (unreleased)
-------------------------
+Version 1.0.1 (2018-10-19)
+--------------------------
+* Support for OpenSlides 2.3
 
 
 Version 1.0 (2018-06-22)
