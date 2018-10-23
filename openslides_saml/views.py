@@ -141,7 +141,7 @@ def serve_metadata(request, *args, **kwargs):
 
 def is_saml_user(request, *args, **kwargs):
     content = 'false'
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         name_id = request.session.get('samlNameId')
         session_index = request.session.get('samlSessionIndex')
         if name_id is not None and session_index is not None:
