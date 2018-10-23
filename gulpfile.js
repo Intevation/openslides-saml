@@ -16,7 +16,7 @@ gulp.task('translations', function () {
         .pipe(gettext.compile({
             format: 'json'
         }))
-        .pipe(gulp.dest(path.join('static', 'i18n', 'openslides_saml')));
+        .pipe(gulp.dest(path.join('openslides_saml', 'static', 'i18n', 'openslides_saml')));
 });
 
 // Gulp default task. Runs all other tasks before.
