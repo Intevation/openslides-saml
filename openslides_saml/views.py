@@ -11,6 +11,7 @@ from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 
 from .settings import SamlSettings
+from openslides.utils.autoupdate import inform_changed_data
 
 
 class IndexView(View):
@@ -83,6 +84,9 @@ class IndexView(View):
         user, created = User.objects.get_or_create(**queryargs)
         if not created:
             self.update_user(user, queryargs['defaults'])
+        # CUSTOM: add delegate group (#2) to each saml user
+        user.groups.add(2)
+        inform_changed_data(user)
         auth_login(request, user)
 
     def get_queryargs(self, mapping, attributes):
